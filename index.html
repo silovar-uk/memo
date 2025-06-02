@@ -5,17 +5,19 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>読書メモアプリ</title>
     <style>
+        /* リセット */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
+        /* ベーススタイル */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             background: #f9fafb;
             color: #1f2937;
-            transition: all 0.3s ease;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         body.dark {
@@ -29,7 +31,7 @@
             padding: 1rem;
         }
 
-        /* Header */
+        /* ヘッダー */
         .header {
             position: sticky;
             top: 0;
@@ -37,8 +39,8 @@
             background: rgba(255, 255, 255, 0.95);
             border-bottom: 1px solid #e5e7eb;
             backdrop-filter: blur(10px);
-            padding: 0.75rem 1rem;
-            margin-bottom: 2rem;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
         }
 
         body.dark .header {
@@ -48,76 +50,108 @@
 
         .header-content {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
             justify-content: space-between;
             max-width: 64rem;
             margin: 0 auto;
+            gap: 0.5rem;
         }
 
         .logo {
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 1.25rem;
+            font-size: 1.125rem;
             font-weight: bold;
         }
 
         .logo-icon {
-            width: 1.75rem;
-            height: 1.75rem;
+            width: 1.5rem;
+            height: 1.5rem;
             color: #3b82f6;
         }
 
         .header-controls {
             display: flex;
+            flex-wrap: wrap;
             align-items: center;
-            gap: 1rem;
+            gap: 0.5rem;
         }
 
+        .export-controls,
+        .note-count,
+        .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.25rem;
+        }
+
+        .note-count {
+            background: #f3f4f6;
+            color: #6b7280;
+            padding: 0.375rem 0.75rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
+            font-weight: 500;
+            white-space: nowrap;
+        }
+
+        body.dark .note-count {
+            background: #374151;
+            color: #9ca3af;
+        }
+
+        /* ボタン */
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: 0.5rem;
-            padding: 0.5rem 1rem;
+            gap: 0.25rem;
+            padding: 0.5rem 0.75rem;
             border: none;
-            border-radius: 0.5rem;
-            font-size: 0.875rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
             font-weight: 500;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease;
             text-decoration: none;
+            background: white;
+            color: #1f2937;
         }
 
         .btn:hover {
-            transform: scale(1.05);
+            transform: scale(1.02);
         }
 
         .btn-primary {
             background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
-            box-shadow: 0 4px 6px rgba(59, 130, 246, 0.3);
+            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.3);
         }
 
         .btn-primary:hover {
             background: linear-gradient(135deg, #2563eb, #1d4ed8);
-            box-shadow: 0 8px 12px rgba(59, 130, 246, 0.4);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.4);
         }
 
         .btn-secondary {
             background: #10b981;
             color: white;
-            box-shadow: 0 4px 6px rgba(16, 185, 129, 0.3);
+            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.3);
         }
 
         .btn-secondary:hover {
             background: #059669;
-            box-shadow: 0 8px 12px rgba(16, 185, 129, 0.4);
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
         }
 
         .btn-icon {
             padding: 0.5rem;
             background: #f3f4f6;
             color: #6b7280;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            transition: background 0.2s ease, color 0.2s ease;
         }
 
         body.dark .btn-icon {
@@ -135,87 +169,98 @@
             color: #f9fafb;
         }
 
-        /* Timer */
+        /* タイマー */
         .timer {
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            padding: 0.75rem 1rem;
+            padding: 0.5rem 0.75rem;
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
-            border-radius: 0.5rem;
+            border-radius: 0.375rem;
+            font-size: 0.75rem;
         }
 
         .timer-display {
             font-family: 'Courier New', monospace;
-            font-size: 1.125rem;
+            font-size: 0.875rem;
             font-weight: 600;
+            min-width: 3rem;
         }
 
         .timer-btn {
-            padding: 0.375rem 0.75rem;
-            font-size: 0.875rem;
-            border-radius: 0.375rem;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.75rem;
+            border-radius: 0.25rem;
+            border: none;
+            background: #3b82f6;
+            color: white;
+            cursor: pointer;
+            transition: background 0.2s ease;
         }
 
         .timer-btn.active {
             background: #ef4444;
         }
 
+        .timer-btn:hover {
+            opacity: 0.9;
+        }
+
         .timer-btn.active:hover {
             background: #dc2626;
         }
 
-        /* Form */
+        /* フォーム */
         .form-section {
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
         }
 
         .form-section label {
             display: block;
-            font-size: 1.125rem;
+            font-size: 1rem;
             font-weight: 600;
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.5rem;
         }
 
-        .input, .textarea {
+        .input,
+        .textarea {
             width: 100%;
-            padding: 0.75rem 1rem;
+            padding: 0.75rem;
             border: 1px solid #d1d5db;
             border-radius: 0.5rem;
             font-size: 1rem;
-            transition: all 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
             background: white;
+            color: inherit;
         }
 
-        body.dark .input, body.dark .textarea {
+        body.dark .input,
+        body.dark .textarea {
             background: #374151;
             border-color: #4b5563;
             color: white;
         }
 
-        .input:focus, .textarea:focus {
+        .input:focus,
+        .textarea:focus {
             outline: none;
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
-            transform: scale(1.01);
         }
 
         .textarea {
-            resize: none;
+            resize: vertical;
+            min-height: 6rem;
             font-family: inherit;
         }
 
-        /* Note Form */
+        /* メモフォーム */
         .note-form {
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
-            transform: translateY(0);
-            transition: all 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
         body.dark .note-form {
@@ -235,7 +280,7 @@
         }
 
         .form-header h3 {
-            font-size: 1.125rem;
+            font-size: 1rem;
             font-weight: 600;
         }
 
@@ -244,9 +289,10 @@
             border: none;
             color: #6b7280;
             cursor: pointer;
+            font-size: 1.25rem;
+            transition: background 0.2s ease, color 0.2s ease;
             padding: 0.25rem;
             border-radius: 0.25rem;
-            transition: all 0.2s ease;
         }
 
         .close-btn:hover {
@@ -261,8 +307,8 @@
 
         .form-row {
             display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 0.75rem;
             margin-bottom: 1rem;
         }
 
@@ -272,13 +318,12 @@
 
         .content-header {
             display: flex;
-            justify-content: between;
+            justify-content: space-between;
             align-items: center;
             margin-bottom: 0.5rem;
         }
 
         .content-header label {
-            margin: 0;
             font-size: 0.875rem;
             font-weight: 500;
         }
@@ -287,15 +332,16 @@
             background: #10b981;
             color: white;
             border: none;
-            padding: 0.25rem 0.75rem;
+            padding: 0.375rem 0.75rem;
             border-radius: 9999px;
-            font-size: 0.875rem;
+            font-size: 0.75rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: background 0.2s ease, transform 0.2s ease;
         }
 
         .thoughts-btn:hover {
             background: #059669;
+            transform: scale(1.05);
         }
 
         .form-actions {
@@ -304,19 +350,26 @@
             margin-top: 1rem;
         }
 
-        /* Notes List */
+        .form-actions .btn {
+            flex: 1;
+            justify-content: center;
+            padding: 0.75rem;
+            font-size: 0.875rem;
+        }
+
+        /* メモリスト */
         .notes-list {
             display: flex;
             flex-direction: column;
-            gap: 1rem;
+            gap: 0.75rem;
         }
 
         .note-card {
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 0.75rem;
-            padding: 1.5rem;
-            transition: all 0.3s ease;
+            padding: 1rem;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
             overflow: hidden;
         }
@@ -327,26 +380,26 @@
         }
 
         .note-card:hover {
-            transform: translateY(-4px) scale(1.02);
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
             border-color: #3b82f6;
         }
 
         body.dark .note-card:hover {
-            box-shadow: 0 20px 25px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
         }
 
         .note-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
         }
 
         .note-meta {
             display: flex;
-            flex-wrap: wrap;
-            gap: 1rem;
+            flex-direction: column;
+            gap: 0.25rem;
             font-size: 0.75rem;
             color: #6b7280;
         }
@@ -371,11 +424,12 @@
         .action-btn {
             padding: 0.5rem;
             border: none;
-            border-radius: 0.5rem;
+            border-radius: 0.375rem;
             cursor: pointer;
-            transition: all 0.2s ease;
+            transition: transform 0.2s ease, background 0.2s ease;
             background: transparent;
             color: #6b7280;
+            font-size: 1rem;
         }
 
         .action-btn:hover {
@@ -391,25 +445,26 @@
 
         .note-content {
             font-size: 0.875rem;
-            line-height: 1.6;
+            line-height: 1.5;
             color: #374151;
-            margin-bottom: 1rem;
+            margin-bottom: 0.75rem;
+            word-wrap: break-word;
         }
 
         body.dark .note-content {
             color: #d1d5db;
         }
 
-        /* Keywords Display */
+        /* キーワード表示 */
         .keywords-display {
             position: fixed;
             bottom: 1rem;
             left: 1rem;
-            max-width: 20rem;
+            max-width: calc(100vw - 2rem);
             background: white;
             border: 1px solid #e5e7eb;
             border-radius: 0.5rem;
-            padding: 0.75rem;
+            padding: 0.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 40;
         }
@@ -441,6 +496,7 @@
             padding: 0.25rem 0.5rem;
             border-radius: 9999px;
             font-size: 0.75rem;
+            white-space: nowrap;
         }
 
         body.dark .keyword-tag {
@@ -448,37 +504,20 @@
             color: #60a5fa;
         }
 
-        /* Empty State */
+        /* 空状態 */
         .empty-state {
             text-align: center;
-            padding: 3rem 1rem;
+            padding: 2rem 1rem;
             color: #6b7280;
         }
 
         .empty-icon {
-            width: 4rem;
-            height: 4rem;
-            margin: 0 auto 1rem;
+            font-size: 3rem;
             opacity: 0.5;
+            margin-bottom: 1rem;
         }
 
-        /* Animations */
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .animate-slide-up {
-            animation: slideUp 0.3s ease-out;
-        }
-
-        /* Toast */
+        /* トースト */
         .toast {
             position: fixed;
             bottom: 2rem;
@@ -493,7 +532,6 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-weight: 500;
             animation: slideUp 0.3s ease-out;
         }
 
@@ -501,27 +539,74 @@
             display: none;
         }
 
-        /* Responsive */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* メディアクエリ */
         @media (max-width: 768px) {
             .container {
                 padding: 0.5rem;
             }
-
-            .header-controls {
+            .header-content {
                 gap: 0.5rem;
             }
-
             .form-row {
                 grid-template-columns: 1fr;
             }
-
             .btn {
                 font-size: 0.75rem;
                 padding: 0.375rem 0.75rem;
             }
+            .note-count,
+            .timer {
+                font-size: 0.75rem;
+                padding: 0.375rem 0.5rem;
+            }
+            .timer-display {
+                font-size: 0.875rem;
+            }
         }
 
-        /* Icons (using Unicode symbols) */
+        @media (max-width: 375px) {
+            .btn {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.625rem;
+            }
+            .timer {
+                padding: 0.375rem;
+                gap: 0.375rem;
+            }
+            .timer-display {
+                font-size: 0.75rem;
+                min-width: 2.5rem;
+            }
+            .note-count {
+                padding: 0.25rem 0.5rem;
+                font-size: 0.625rem;
+            }
+            .form-row {
+                gap: 0.5rem;
+            }
+            .note-card {
+                padding: 0.5rem;
+            }
+            .note-meta {
+                font-size: 0.625rem;
+            }
+            .action-btn {
+                padding: 0.25rem;
+            }
+        }
+
+        /* アイコン（Unicode） */
         .icon-book::before { content: "📚"; }
         .icon-edit::before { content: "✏️"; }
         .icon-delete::before { content: "🗑️"; }
@@ -544,21 +629,23 @@
                 <h1>読書メモ</h1>
             </div>
             <div class="header-controls">
-                <button class="btn btn-primary" onclick="exportMarkdown()">
-                    <span class="icon-copy"></span>
-                    MD出力
-                </button>
-                <button class="btn btn-secondary" onclick="exportJSON()">
-                    <span class="icon-download"></span>
-                    JSON出力
-                </button>
+                <div class="export-controls">
+                    <button class="btn btn-primary" onclick="exportMarkdown()">
+                        <span class="icon-copy"></span>
+                        MD出力
+                    </button>
+                    <button class="btn btn-secondary" onclick="exportJSON()">
+                        <span class="icon-download"></span>
+                        JSON出力
+                    </button>
+                </div>
                 <div class="note-count">
                     <span id="noteCount">0</span>件のメモ
                 </div>
                 <div class="timer">
                     <span class="icon-clock"></span>
                     <span class="timer-display" id="timerDisplay">25:00</span>
-                    <button class="btn timer-btn" id="timerBtn" onclick="toggleTimer()">開始</button>
+                    <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">開始</button>
                 </div>
                 <button class="btn-icon" onclick="toggleDarkMode()" id="themeToggle">
                     <span class="icon-moon"></span>
@@ -568,20 +655,20 @@
     </header>
 
     <div class="container">
-        <!-- Book Title Input -->
+        <!-- 書籍入力 -->
         <div class="form-section">
             <label for="bookTitle">読んでいる本のタイトル</label>
             <input type="text" id="bookTitle" class="input" placeholder="本のタイトルを入力してください">
         </div>
 
-        <!-- Global Keywords Input -->
+        <!-- グローバルキーワード入力 -->
         <div class="form-section">
             <label for="globalKeywords">全体キーワード</label>
             <textarea id="globalKeywords" class="textarea" rows="2" placeholder="この本全体に関連するキーワードをスペース区切りで入力してください"></textarea>
             <div id="keywordPreview" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;"></div>
         </div>
 
-        <!-- New Note Button -->
+        <!-- 新規メモボタン -->
         <div style="text-align: right; margin-bottom: 1rem;">
             <button class="btn btn-primary" onclick="showNewNoteForm()">
                 <span class="icon-plus"></span>
@@ -589,10 +676,10 @@
             </button>
         </div>
 
-        <!-- Note Form -->
+        <!-- メモフォーム -->
         <div class="note-form hidden" id="noteForm">
             <div class="form-header">
-                <h3 id="formTitle">新しいメモ</h3>
+                <h3 id="formTitle">新しいメモ</n3>
                 <button class="close-btn" onclick="hideNoteForm()">
                     <span class="icon-close"></span>
                 </button>
@@ -612,9 +699,7 @@
             <div class="content-section">
                 <div class="content-header">
                     <label for="noteContent">メモ内容</label>
-                    <button class="thoughts-btn" onclick="addThoughtsTag()">
-                        💭 自分の考え
-                    </button>
+                    <button class="thoughts-btn" onclick="addThoughtsTag()">💭 自分の考え</button>
                 </div>
                 <textarea id="noteContent" class="textarea" rows="8" placeholder="メモの内容をここに書いてください... (マークダウン記法対応: **太字** *斜体* `コード`)"></textarea>
             </div>
@@ -624,13 +709,11 @@
                     <span class="icon-save"></span>
                     保存
                 </button>
-                <button class="btn" onclick="hideNoteForm()">
-                    キャンセル
-                </button>
+                <button class="btn" onclick="hideNoteForm()">キャンセル</button>
             </div>
         </div>
 
-        <!-- Notes List -->
+        <!-- メモリスト -->
         <div class="notes-list" id="notesList">
             <div class="empty-state" id="emptyState">
                 <div class="empty-icon">📚</div>
@@ -640,20 +723,20 @@
         </div>
     </div>
 
-    <!-- Global Keywords Display -->
+    <!-- グローバルキーワード表示 -->
     <div class="keywords-display hidden" id="keywordsDisplay">
         <div class="keywords-title">🏷️ 全体キーワード:</div>
         <div class="keywords-list" id="keywordsList"></div>
     </div>
 
-    <!-- Toast Notification -->
+    <!-- トースト通知 -->
     <div class="toast hidden" id="toast">
         <span class="icon-check"></span>
         <span id="toastMessage"></span>
     </div>
 
     <script>
-        // Global variables
+        // グローバル変数
         let notes = [];
         let editingIndex = -1;
         let timerInterval = null;
@@ -661,17 +744,17 @@
         let isTimerActive = false;
         let isDarkMode = false;
 
-        // Initialize app
+        // 初期化
         document.addEventListener('DOMContentLoaded', function() {
             updateNoteCount();
             updateKeywordsPreview();
             updateKeywordsDisplay();
-            
-            // Auto-save inputs
+
+            // 自動保存
             document.getElementById('globalKeywords').addEventListener('input', updateKeywordsPreview);
             document.getElementById('globalKeywords').addEventListener('input', updateKeywordsDisplay);
-            
-            // Page/Location mutual exclusion
+
+            // ページ/位置の相互排他
             document.getElementById('notePage').addEventListener('input', function() {
                 if (this.value) document.getElementById('noteLocation').value = '';
             });
@@ -680,7 +763,7 @@
             });
         });
 
-        // Note management
+        // メモ管理
         function showNewNoteForm() {
             editingIndex = -1;
             document.getElementById('formTitle').textContent = '新しいメモ';
@@ -737,12 +820,12 @@
         function editNote(index) {
             editingIndex = index;
             const note = notes[index];
-            
+
             document.getElementById('formTitle').textContent = 'メモを編集';
             document.getElementById('notePage').value = note.page || '';
             document.getElementById('noteLocation').value = note.location || '';
             document.getElementById('noteContent').value = note.content || '';
-            
+
             document.getElementById('noteForm').classList.remove('hidden');
             document.getElementById('noteContent').focus();
         }
@@ -762,23 +845,22 @@
 
             if (notes.length === 0) {
                 emptyState.style.display = 'block';
+                notesList.innerHTML = '';
                 return;
             }
 
             emptyState.style.display = 'none';
-            
+
             notesList.innerHTML = notes.map((note, index) => {
                 const date = new Date(note.createdAt);
                 const formattedDate = date.toLocaleDateString('ja-JP');
                 const formattedTime = date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-                
-                const position = note.page ? `${note.page}ページ` : 
-                               note.location ? `Kindle位置.${note.location}` : '';
 
+                const position = note.page ? `${note.page}ページ` : note.location ? `Kindle位置.${note.location}` : '';
                 const content = renderMarkdown(note.content);
 
                 return `
-                    <div class="note-card animate-slide-up" style="animation-delay: ${index * 50}ms">
+                    <div class="note-card animate-slide-up" style="animation-delay: ${index * 50}ms;">
                         <div class="note-header">
                             <div class="note-meta">
                                 <div class="note-meta-item">
@@ -820,7 +902,7 @@
         function updateKeywordsPreview() {
             const keywords = document.getElementById('globalKeywords').value.trim();
             const preview = document.getElementById('keywordPreview');
-            
+
             if (keywords) {
                 const keywordArray = keywords.split(/\s+/);
                 preview.textContent = `${keywordArray.length}個のキーワード: ${keywordArray.join(' / ')}`;
@@ -833,27 +915,25 @@
             const keywords = document.getElementById('globalKeywords').value.trim();
             const display = document.getElementById('keywordsDisplay');
             const list = document.getElementById('keywordsList');
-            
+
             if (keywords) {
                 const keywordArray = keywords.split(/\s+/);
                 const displayKeywords = keywordArray.slice(0, 5);
                 const remaining = keywordArray.length - 5;
-                
-                list.innerHTML = displayKeywords.map(keyword => 
-                    `<span class="keyword-tag">${keyword}</span>`
-                ).join('') + (remaining > 0 ? `<span style="font-size: 0.75rem; color: #6b7280;">+${remaining}</span>` : '');
-                
+
+                list.innerHTML = displayKeywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('') + (remaining > 0 ? `<span style="font-size: 0.75rem; color: #6b7280;">+${remaining}</span>` : '');
+
                 display.classList.remove('hidden');
             } else {
                 display.classList.add('hidden');
             }
         }
 
-        // Timer functions
+        // タイマー関連
         function toggleTimer() {
             isTimerActive = !isTimerActive;
             const btn = document.getElementById('timerBtn');
-            
+
             if (isTimerActive) {
                 btn.textContent = '停止';
                 btn.classList.add('active');
@@ -869,7 +949,7 @@
             timerInterval = setInterval(() => {
                 timerSeconds--;
                 updateTimerDisplay();
-                
+
                 if (timerSeconds <= 0) {
                     stopTimer();
                     alert('ポモドーロタイマー完了！お疲れ様でした。');
@@ -897,34 +977,33 @@
             document.getElementById('timerDisplay').textContent = display;
         }
 
-        // Dark mode
+        // ダークモード切り替え
         function toggleDarkMode() {
             isDarkMode = !isDarkMode;
             document.body.classList.toggle('dark', isDarkMode);
-            
+
             const toggle = document.getElementById('themeToggle');
             toggle.innerHTML = isDarkMode ? '<span class="icon-sun"></span>' : '<span class="icon-moon"></span>';
         }
 
-        // Export functions
+        // エクスポート
         function exportMarkdown() {
             const keywords = document.getElementById('globalKeywords').value.trim().split(/\s+/).filter(k => k);
-            
+
             const content = notes.map(note => {
-                const position = note.page ? `${note.page}ページ` : 
-                               note.location ? `Kindle位置.${note.location}` : '';
-                
+                const position = note.page ? `${note.page}ページ` : note.location ? `Kindle位置.${note.location}` : '';
+
                 let md = `# ${note.bookTitle}\n\n`;
                 if (position) md += `**位置:** ${position}\n`;
                 if (keywords.length > 0) md += `**キーワード:** ${keywords.join(' / ')}\n`;
-                
+
                 const date = new Date(note.createdAt);
                 const formattedDate = date.toLocaleDateString('ja-JP');
                 const formattedTime = date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
                 md += `**作成日:** ${formattedDate} ${formattedTime}\n\n`;
                 md += `${note.content}\n\n`;
                 md += `---\n\n`;
-                
+
                 return md;
             }).join('');
 
@@ -934,7 +1013,7 @@
 
         function exportJSON() {
             const keywords = document.getElementById('globalKeywords').value.trim().split(/\s+/).filter(k => k);
-            
+
             const exportData = notes.map(note => ({
                 bookTitle: note.bookTitle,
                 content: note.content,
@@ -953,7 +1032,6 @@
             if (navigator.clipboard) {
                 navigator.clipboard.writeText(text);
             } else {
-                // Fallback for older browsers
                 const textArea = document.createElement('textarea');
                 textArea.value = text;
                 document.body.appendChild(textArea);
@@ -976,16 +1054,16 @@
         function showToast(message) {
             const toast = document.getElementById('toast');
             const toastMessage = document.getElementById('toastMessage');
-            
+
             toastMessage.textContent = message;
             toast.classList.remove('hidden');
-            
+
             setTimeout(() => {
                 toast.classList.add('hidden');
             }, 3000);
         }
 
-        // Keyboard shortcuts
+        // ショートカット
         document.addEventListener('keydown', function(e) {
             if (e.ctrlKey || e.metaKey) {
                 switch (e.key) {
