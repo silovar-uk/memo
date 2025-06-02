@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>読書メモアプリ</title>
+    <title>メモ補助ツール</title>
     <style>
         /* リセット */
         * {
@@ -62,14 +62,8 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
-            font-size: 1.125rem;
-            font-weight: bold;
-        }
-
-        .logo-icon {
-            width: 1.5rem;
-            height: 1.5rem;
-            color: #3b82f6;
+            font-size: 1rem;
+            font-weight: 600;
         }
 
         .header-controls {
@@ -79,11 +73,8 @@
             gap: 0.5rem;
         }
 
-        .export-controls,
-        .note-count,
-        .timer {
+        .export-controls {
             display: flex;
-            align-items: center;
             gap: 0.25rem;
         }
 
@@ -150,8 +141,14 @@
             background: #f3f4f6;
             color: #6b7280;
             border-radius: 0.375rem;
+            border: none;
             cursor: pointer;
             transition: background 0.2s ease, color 0.2s ease;
+        }
+
+        body.dark .btn {
+            background: #374151;
+            color: #d1d5db;
         }
 
         body.dark .btn-icon {
@@ -171,6 +168,9 @@
 
         /* タイマー */
         .timer {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
             padding: 0.5rem 0.75rem;
             background: rgba(59, 130, 246, 0.1);
             border: 1px solid rgba(59, 130, 246, 0.2);
@@ -185,7 +185,8 @@
             min-width: 3rem;
         }
 
-        .timer-btn {
+        .timer-btn,
+        .reset-btn {
             padding: 0.25rem 0.5rem;
             font-size: 0.75rem;
             border-radius: 0.25rem;
@@ -200,7 +201,8 @@
             background: #ef4444;
         }
 
-        .timer-btn:hover {
+        .timer-btn:hover,
+        .reset-btn:hover {
             opacity: 0.9;
         }
 
@@ -213,11 +215,116 @@
             margin-bottom: 1rem;
         }
 
+        .sticky-keywords {
+            position: sticky;
+            top: 3.5rem;
+            background: inherit;
+            z-index: 40;
+            padding-bottom: 0.5rem;
+        }
+
         .form-section label {
             display: block;
             font-size: 1rem;
             font-weight: 600;
             margin-bottom: 0.5rem;
+        }
+
+        /* iPhone SE対応 - 375px以下で全て1列表示 */
+        @media (max-width: 375px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .logo {
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+
+            .header-controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .export-controls {
+                justify-content: center;
+            }
+
+            .timer {
+                justify-content: center;
+            }
+
+            .note-count {
+                text-align: center;
+            }
+
+            /* フォーム要素を横並びに */
+            .form-section {
+                margin-bottom: 0.75rem;
+            }
+
+            .form-section label {
+                display: inline-block;
+                width: 30%;
+                font-size: 0.875rem;
+                font-weight: 600;
+                margin-bottom: 0;
+                margin-right: 0.5rem;
+                vertical-align: top;
+                padding-top: 0.75rem;
+            }
+
+            .form-section .input,
+            .form-section .textarea {
+                display: inline-block;
+                width: 65%;
+                padding: 0.75rem;
+                font-size: 0.875rem;
+                vertical-align: top;
+            }
+
+            /* ページ番号とKindle位置の横並びを維持 */
+            .page-location-row {
+                display: flex;
+                gap: 0.5rem;
+                margin-bottom: 0.75rem;
+            }
+
+            .page-location-row > div {
+                flex: 1;
+            }
+
+            .page-location-row label {
+                display: block;
+                width: auto;
+                font-size: 0.75rem;
+                margin-bottom: 0.25rem;
+                padding: 0;
+            }
+
+            .page-location-row .input {
+                display: block;
+                width: 100%;
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            /* メモカードのメタ情報も1列に */
+            .note-meta-row {
+                flex-direction: column;
+                gap: 0.25rem;
+                align-items: flex-start;
+            }
+
+            .note-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .note-actions {
+                align-self: flex-end;
+            }
         }
 
         .input,
@@ -252,6 +359,24 @@
             font-family: inherit;
         }
 
+        /* ページ番号・Kindle位置を1行に */
+        .page-location-row {
+            display: flex;
+            gap: 0.75rem;
+            margin-bottom: 1rem;
+        }
+
+        .page-location-row > div {
+            flex: 1;
+        }
+
+        .page-location-row label {
+            display: block;
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
         /* メモフォーム */
         .note-form {
             background: white;
@@ -274,7 +399,7 @@
 
         .form-header {
             display: flex;
-            justify-content: space-between;
+            justify-content: flex-end;
             align-items: center;
             margin-bottom: 1rem;
         }
@@ -305,13 +430,6 @@
             color: #f9fafb;
         }
 
-        .form-row {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
         .content-section {
             margin-bottom: 1rem;
         }
@@ -326,6 +444,7 @@
         .content-header label {
             font-size: 0.875rem;
             font-weight: 500;
+            margin: 0;
         }
 
         .thoughts-btn {
@@ -369,7 +488,7 @@
             border: 1px solid #e5e7eb;
             border-radius: 0.75rem;
             padding: 1rem;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
         }
@@ -410,6 +529,13 @@
             gap: 0.25rem;
         }
 
+        .note-meta-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
         .note-actions {
             display: flex;
             gap: 0.25rem;
@@ -426,7 +552,7 @@
             border: none;
             border-radius: 0.375rem;
             cursor: pointer;
-            transition: transform 0.2s ease, background 0.2s ease;
+            transition: all 0.2s ease;
             background: transparent;
             color: #6b7280;
             font-size: 1rem;
@@ -448,7 +574,6 @@
             line-height: 1.5;
             color: #374151;
             margin-bottom: 0.75rem;
-            word-wrap: break-word;
         }
 
         body.dark .note-content {
@@ -504,7 +629,11 @@
             color: #60a5fa;
         }
 
-        /* 空状態 */
+        body.dark .url-section {
+            border-top-color: #4b5563;
+        }
+
+        /* 空の状態 */
         .empty-state {
             text-align: center;
             padding: 2rem 1rem;
@@ -512,9 +641,27 @@
         }
 
         .empty-icon {
-            font-size: 3rem;
+            width: 3rem;
+            height: 3rem;
+            margin: 0 auto 1rem;
             opacity: 0.5;
-            margin-bottom: 1rem;
+            font-size: 3rem;
+        }
+
+        /* アニメーション */
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .animate-slide-up {
+            animation: slideUp 0.3s ease-out;
         }
 
         /* トースト */
@@ -532,6 +679,7 @@
             display: flex;
             align-items: center;
             gap: 0.5rem;
+            font-weight: 500;
             animation: slideUp 0.3s ease-out;
         }
 
@@ -539,75 +687,96 @@
             display: none;
         }
 
-        @keyframes slideUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        /* メディアクエリ */
+        /* レスポンシブ */
         @media (max-width: 768px) {
             .container {
                 padding: 0.5rem;
             }
-            .header-content {
-                gap: 0.5rem;
-            }
-            .form-row {
-                grid-template-columns: 1fr;
-            }
-            .btn {
-                font-size: 0.75rem;
-                padding: 0.375rem 0.75rem;
-            }
-            .note-count,
-            .timer {
-                font-size: 0.75rem;
-                padding: 0.375rem 0.5rem;
-            }
-            .timer-display {
-                font-size: 0.875rem;
-            }
-        }
 
-        @media (max-width: 375px) {
-            .btn {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.625rem;
-            }
-            .timer {
-                padding: 0.375rem;
-                gap: 0.375rem;
-            }
-            .timer-display {
-                font-size: 0.75rem;
-                min-width: 2.5rem;
-            }
-            .note-count {
-                padding: 0.25rem 0.5rem;
-                font-size: 0.625rem;
-            }
-            .form-row {
-                gap: 0.5rem;
-            }
-            .note-card {
+            .header {
                 padding: 0.5rem;
             }
-            .note-meta {
-                font-size: 0.625rem;
+
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 0.5rem;
             }
-            .action-btn {
-                padding: 0.25rem;
+
+            .header-controls {
+                justify-content: space-between;
+                flex-wrap: wrap;
+            }
+
+            .note-actions {
+                opacity: 1;
             }
         }
 
-        /* アイコン（Unicode） */
-        .icon-book::before { content: "📚"; }
+        /* iPhone SE対応 - 375px以下で全て1列表示 */
+        @media (max-width: 375px) {
+            .header-content {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .logo {
+                justify-content: center;
+                margin-bottom: 0.5rem;
+            }
+
+            .header-controls {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .export-controls {
+                justify-content: center;
+            }
+
+            .timer {
+                justify-content: center;
+            }
+
+            .note-count {
+                text-align: center;
+            }
+
+            /* フォーム要素を1列に */
+            .form-section {
+                margin-bottom: 0.75rem;
+            }
+
+            .form-section label {
+                font-size: 0.875rem;
+                margin-bottom: 0.25rem;
+            }
+
+            .input,
+            .textarea {
+                padding: 0.5rem;
+                font-size: 0.875rem;
+            }
+
+            /* メモカードのメタ情報も1列に */
+            .note-meta-row {
+                flex-direction: column;
+                gap: 0.25rem;
+                align-items: flex-start;
+            }
+
+            .note-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+
+            .note-actions {
+                align-self: flex-end;
+            }
+        }
+
+        /* アイコン */
+        .icon-book::before { content: "📝"; }
         .icon-edit::before { content: "✏️"; }
         .icon-delete::before { content: "🗑️"; }
         .icon-save::before { content: "💾"; }
@@ -619,6 +788,17 @@
         .icon-moon::before { content: "🌙"; }
         .icon-plus::before { content: "+"; }
         .icon-check::before { content: "✓"; }
+        .icon-reset::before { content: "🔄"; }
+
+        .hidden-mobile {
+            display: inline;
+        }
+
+        @media (max-width: 480px) {
+            .hidden-mobile {
+                display: none;
+            }
+        }
     </style>
 </head>
 <body>
@@ -626,28 +806,31 @@
         <div class="header-content">
             <div class="logo">
                 <span class="icon-book"></span>
-                <h1>読書メモ</h1>
+                <h1>メモ補助ツール</h1>
             </div>
             <div class="header-controls">
                 <div class="export-controls">
-                    <button class="btn btn-primary" onclick="exportMarkdown()">
+                    <button class="btn btn-primary" id="exportMd">
                         <span class="icon-copy"></span>
-                        MD出力
+                        <span class="hidden-mobile">MD</span>
                     </button>
-                    <button class="btn btn-secondary" onclick="exportJSON()">
+                    <button class="btn btn-secondary" id="exportJson">
                         <span class="icon-download"></span>
-                        JSON出力
+                        <span class="hidden-mobile">JSON</span>
                     </button>
                 </div>
                 <div class="note-count">
-                    <span id="noteCount">0</span>件のメモ
+                    <span id="noteCount">0</span>件
                 </div>
                 <div class="timer">
                     <span class="icon-clock"></span>
                     <span class="timer-display" id="timerDisplay">25:00</span>
-                    <button class="timer-btn" id="timerBtn" onclick="toggleTimer()">開始</button>
+                    <button class="timer-btn" id="timerBtn">開始</button>
+                    <button class="reset-btn" id="resetBtn">
+                        <span class="icon-reset"></span>
+                    </button>
                 </div>
-                <button class="btn-icon" onclick="toggleDarkMode()" id="themeToggle">
+                <button class="btn-icon" id="themeToggle">
                     <span class="icon-moon"></span>
                 </button>
             </div>
@@ -655,37 +838,23 @@
     </header>
 
     <div class="container">
-        <!-- 書籍入力 -->
+        <!-- タイトル入力 -->
         <div class="form-section">
-            <label for="bookTitle">読んでいる本のタイトル</label>
-            <input type="text" id="bookTitle" class="input" placeholder="本のタイトルを入力してください">
+            <label for="bookTitle">タイトル</label>
+            <input type="text" id="bookTitle" class="input" placeholder="メモのタイトルを入力してください">
         </div>
 
-        <!-- グローバルキーワード入力 -->
-        <div class="form-section">
+        <!-- グローバルキーワード入力（スティッキー） -->
+        <div class="form-section sticky-keywords">
             <label for="globalKeywords">全体キーワード</label>
-            <textarea id="globalKeywords" class="textarea" rows="2" placeholder="この本全体に関連するキーワードをスペース区切りで入力してください"></textarea>
+            <textarea id="globalKeywords" class="textarea" rows="1" placeholder="全体に関連するキーワードをスペース区切りで入力してください"></textarea>
             <div id="keywordPreview" style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;"></div>
         </div>
 
-        <!-- 新規メモボタン -->
-        <div style="text-align: right; margin-bottom: 1rem;">
-            <button class="btn btn-primary" onclick="showNewNoteForm()">
-                <span class="icon-plus"></span>
-                新規メモ
-            </button>
-        </div>
-
         <!-- メモフォーム -->
-        <div class="note-form hidden" id="noteForm">
-            <div class="form-header">
-                <h3 id="formTitle">新しいメモ</n3>
-                <button class="close-btn" onclick="hideNoteForm()">
-                    <span class="icon-close"></span>
-                </button>
-            </div>
-
-            <div class="form-row">
+        <div class="note-form" id="noteForm">
+            <!-- ページ番号とKindle位置を横並びに -->
+            <div class="page-location-row">
                 <div>
                     <label for="notePage">ページ番号</label>
                     <input type="text" id="notePage" class="input" placeholder="例: 123">
@@ -699,26 +868,46 @@
             <div class="content-section">
                 <div class="content-header">
                     <label for="noteContent">メモ内容</label>
-                    <button class="thoughts-btn" onclick="addThoughtsTag()">💭 自分の考え</button>
+                    <button class="thoughts-btn" id="thoughtsBtn">
+                        💭 自分の考え
+                    </button>
                 </div>
                 <textarea id="noteContent" class="textarea" rows="8" placeholder="メモの内容をここに書いてください... (マークダウン記法対応: **太字** *斜体* `コード`)"></textarea>
             </div>
 
             <div class="form-actions">
-                <button class="btn btn-primary" onclick="saveNote()">
+                <button class="btn btn-primary" id="saveBtn">
                     <span class="icon-save"></span>
                     保存
                 </button>
-                <button class="btn" onclick="hideNoteForm()">キャンセル</button>
+                <button class="btn" id="cancelBtn">
+                    キャンセル
+                </button>
             </div>
+        </div>
+
+        <!-- 新規メモボタン -->
+        <div style="text-align: right; margin-bottom: 1rem;">
+            <button class="btn btn-primary" id="newNoteBtn">
+                <span class="icon-plus"></span>
+                新規メモ
+            </button>
         </div>
 
         <!-- メモリスト -->
         <div class="notes-list" id="notesList">
             <div class="empty-state" id="emptyState">
-                <div class="empty-icon">📚</div>
+                <div class="empty-icon">📝</div>
                 <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">まだメモがありません</p>
                 <p style="font-size: 0.875rem;">新規メモボタンで最初のメモを作成しましょう</p>
+            </div>
+        </div>
+
+        <!-- URL入力セクション -->
+        <div class="url-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+            <div class="form-section">
+                <label for="bookUrl">参考URL（任意）</label>
+                <input type="url" id="bookUrl" class="input" placeholder="https://example.com">
             </div>
         </div>
     </div>
@@ -742,151 +931,37 @@
         let timerInterval = null;
         let timerSeconds = 25 * 60;
         let isTimerActive = false;
-        let isDarkMode = false;
+        let isDarkMode = true;
 
-        // 初期化
-        document.addEventListener('DOMContentLoaded', function() {
-            updateNoteCount();
-            updateKeywordsPreview();
-            updateKeywordsDisplay();
+        // DOM要素の取得
+        const elements = {
+            exportMd: document.getElementById('exportMd'),
+            exportJson: document.getElementById('exportJson'),
+            themeToggle: document.getElementById('themeToggle'),
+            timerBtn: document.getElementById('timerBtn'),
+            resetBtn: document.getElementById('resetBtn'),
+            newNoteBtn: document.getElementById('newNoteBtn'),
+            thoughtsBtn: document.getElementById('thoughtsBtn'),
+            saveBtn: document.getElementById('saveBtn'),
+            cancelBtn: document.getElementById('cancelBtn'),
+            noteForm: document.getElementById('noteForm'),
+            notesList: document.getElementById('notesList'),
+            globalKeywords: document.getElementById('globalKeywords'),
+            keywordPreview: document.getElementById('keywordPreview'),
+            keywordsDisplay: document.getElementById('keywordsDisplay'),
+            keywordsList: document.getElementById('keywordsList'),
+            toast: document.getElementById('toast'),
+            toastMessage: document.getElementById('toastMessage'),
+            noteCount: document.getElementById('noteCount'),
+            timerDisplay: document.getElementById('timerDisplay'),
+            bookTitle: document.getElementById('bookTitle'),
+            bookUrl: document.getElementById('bookUrl'),
+            notePage: document.getElementById('notePage'),
+            noteLocation: document.getElementById('noteLocation'),
+            noteContent: document.getElementById('noteContent')
+        };
 
-            // 自動保存
-            document.getElementById('globalKeywords').addEventListener('input', updateKeywordsPreview);
-            document.getElementById('globalKeywords').addEventListener('input', updateKeywordsDisplay);
-
-            // ページ/位置の相互排他
-            document.getElementById('notePage').addEventListener('input', function() {
-                if (this.value) document.getElementById('noteLocation').value = '';
-            });
-            document.getElementById('noteLocation').addEventListener('input', function() {
-                if (this.value) document.getElementById('notePage').value = '';
-            });
-        });
-
-        // メモ管理
-        function showNewNoteForm() {
-            editingIndex = -1;
-            document.getElementById('formTitle').textContent = '新しいメモ';
-            document.getElementById('noteForm').classList.remove('hidden');
-            clearForm();
-            document.getElementById('noteContent').focus();
-        }
-
-        function hideNoteForm() {
-            document.getElementById('noteForm').classList.add('hidden');
-            clearForm();
-        }
-
-        function clearForm() {
-            document.getElementById('notePage').value = '';
-            document.getElementById('noteLocation').value = '';
-            document.getElementById('noteContent').value = '';
-        }
-
-        function addThoughtsTag() {
-            const content = document.getElementById('noteContent');
-            const tag = '#自分の考え';
-            if (!content.value.includes(tag)) {
-                content.value = content.value ? content.value + '\n\n' + tag : tag;
-            }
-        }
-
-        function saveNote() {
-            const content = document.getElementById('noteContent').value.trim();
-            if (!content) return;
-
-            const noteData = {
-                id: editingIndex >= 0 ? notes[editingIndex].id : Date.now(),
-                bookTitle: document.getElementById('bookTitle').value || '無題の本',
-                content: content,
-                page: document.getElementById('notePage').value,
-                location: document.getElementById('noteLocation').value,
-                createdAt: editingIndex >= 0 ? notes[editingIndex].createdAt : new Date().toISOString(),
-                updatedAt: new Date().toISOString()
-            };
-
-            if (editingIndex >= 0) {
-                notes[editingIndex] = noteData;
-            } else {
-                notes.unshift(noteData);
-            }
-
-            renderNotes();
-            hideNoteForm();
-            updateNoteCount();
-            showToast('メモが保存されました');
-        }
-
-        function editNote(index) {
-            editingIndex = index;
-            const note = notes[index];
-
-            document.getElementById('formTitle').textContent = 'メモを編集';
-            document.getElementById('notePage').value = note.page || '';
-            document.getElementById('noteLocation').value = note.location || '';
-            document.getElementById('noteContent').value = note.content || '';
-
-            document.getElementById('noteForm').classList.remove('hidden');
-            document.getElementById('noteContent').focus();
-        }
-
-        function deleteNote(index) {
-            if (confirm('このメモを削除しますか？')) {
-                notes.splice(index, 1);
-                renderNotes();
-                updateNoteCount();
-                showToast('メモが削除されました');
-            }
-        }
-
-        function renderNotes() {
-            const notesList = document.getElementById('notesList');
-            const emptyState = document.getElementById('emptyState');
-
-            if (notes.length === 0) {
-                emptyState.style.display = 'block';
-                notesList.innerHTML = '';
-                return;
-            }
-
-            emptyState.style.display = 'none';
-
-            notesList.innerHTML = notes.map((note, index) => {
-                const date = new Date(note.createdAt);
-                const formattedDate = date.toLocaleDateString('ja-JP');
-                const formattedTime = date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-
-                const position = note.page ? `${note.page}ページ` : note.location ? `Kindle位置.${note.location}` : '';
-                const content = renderMarkdown(note.content);
-
-                return `
-                    <div class="note-card animate-slide-up" style="animation-delay: ${index * 50}ms;">
-                        <div class="note-header">
-                            <div class="note-meta">
-                                <div class="note-meta-item">
-                                    <span class="icon-book"></span>
-                                    <span>${note.bookTitle}</span>
-                                </div>
-                                ${position ? `<div class="keyword-tag">${position}</div>` : ''}
-                                <div class="note-meta-item">
-                                    <span>${formattedDate} ${formattedTime}</span>
-                                </div>
-                            </div>
-                            <div class="note-actions">
-                                <button class="action-btn" onclick="editNote(${index})" title="編集">
-                                    <span class="icon-edit"></span>
-                                </button>
-                                <button class="action-btn delete" onclick="deleteNote(${index})" title="削除">
-                                    <span class="icon-delete"></span>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="note-content">${content}</div>
-                    </div>
-                `;
-            }).join('');
-        }
-
+        // ユーティリティ関数
         function renderMarkdown(text) {
             return text
                 .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
@@ -895,150 +970,22 @@
                 .replace(/\n/g, '<br>');
         }
 
-        function updateNoteCount() {
-            document.getElementById('noteCount').textContent = notes.length;
-        }
-
-        function updateKeywordsPreview() {
-            const keywords = document.getElementById('globalKeywords').value.trim();
-            const preview = document.getElementById('keywordPreview');
-
-            if (keywords) {
-                const keywordArray = keywords.split(/\s+/);
-                preview.textContent = `${keywordArray.length}個のキーワード: ${keywordArray.join(' / ')}`;
-            } else {
-                preview.textContent = '';
-            }
-        }
-
-        function updateKeywordsDisplay() {
-            const keywords = document.getElementById('globalKeywords').value.trim();
-            const display = document.getElementById('keywordsDisplay');
-            const list = document.getElementById('keywordsList');
-
-            if (keywords) {
-                const keywordArray = keywords.split(/\s+/);
-                const displayKeywords = keywordArray.slice(0, 5);
-                const remaining = keywordArray.length - 5;
-
-                list.innerHTML = displayKeywords.map(keyword => `<span class="keyword-tag">${keyword}</span>`).join('') + (remaining > 0 ? `<span style="font-size: 0.75rem; color: #6b7280;">+${remaining}</span>` : '');
-
-                display.classList.remove('hidden');
-            } else {
-                display.classList.add('hidden');
-            }
-        }
-
-        // タイマー関連
-        function toggleTimer() {
-            isTimerActive = !isTimerActive;
-            const btn = document.getElementById('timerBtn');
-
-            if (isTimerActive) {
-                btn.textContent = '停止';
-                btn.classList.add('active');
-                startTimer();
-            } else {
-                btn.textContent = '開始';
-                btn.classList.remove('active');
-                stopTimer();
-            }
-        }
-
-        function startTimer() {
-            timerInterval = setInterval(() => {
-                timerSeconds--;
-                updateTimerDisplay();
-
-                if (timerSeconds <= 0) {
-                    stopTimer();
-                    alert('ポモドーロタイマー完了！お疲れ様でした。');
-                    timerSeconds = 25 * 60;
-                    updateTimerDisplay();
-                }
-            }, 1000);
-        }
-
-        function stopTimer() {
-            if (timerInterval) {
-                clearInterval(timerInterval);
-                timerInterval = null;
-            }
-            isTimerActive = false;
-            const btn = document.getElementById('timerBtn');
-            btn.textContent = '開始';
-            btn.classList.remove('active');
-        }
-
-        function updateTimerDisplay() {
-            const minutes = Math.floor(timerSeconds / 60);
-            const seconds = timerSeconds % 60;
-            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
-            document.getElementById('timerDisplay').textContent = display;
-        }
-
-        // ダークモード切り替え
-        function toggleDarkMode() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark', isDarkMode);
-
-            const toggle = document.getElementById('themeToggle');
-            toggle.innerHTML = isDarkMode ? '<span class="icon-sun"></span>' : '<span class="icon-moon"></span>';
-        }
-
-        // エクスポート
-        function exportMarkdown() {
-            const keywords = document.getElementById('globalKeywords').value.trim().split(/\s+/).filter(k => k);
-
-            const content = notes.map(note => {
-                const position = note.page ? `${note.page}ページ` : note.location ? `Kindle位置.${note.location}` : '';
-
-                let md = `# ${note.bookTitle}\n\n`;
-                if (position) md += `**位置:** ${position}\n`;
-                if (keywords.length > 0) md += `**キーワード:** ${keywords.join(' / ')}\n`;
-
-                const date = new Date(note.createdAt);
-                const formattedDate = date.toLocaleDateString('ja-JP');
-                const formattedTime = date.toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' });
-                md += `**作成日:** ${formattedDate} ${formattedTime}\n\n`;
-                md += `${note.content}\n\n`;
-                md += `---\n\n`;
-
-                return md;
-            }).join('');
-
-            copyToClipboard(content);
-            showToast('Markdownをクリップボードにコピーしました');
-        }
-
-        function exportJSON() {
-            const keywords = document.getElementById('globalKeywords').value.trim().split(/\s+/).filter(k => k);
-
-            const exportData = notes.map(note => ({
-                bookTitle: note.bookTitle,
-                content: note.content,
-                globalKeywords: keywords,
-                position: note.page ? `${note.page}ページ` : note.location ? `Kindle位置.${note.location}` : '',
-                createdAt: note.createdAt,
-                updatedAt: note.updatedAt
-            }));
-
-            const jsonContent = JSON.stringify(exportData, null, 2);
-            downloadFile(jsonContent, `reading-notes-${new Date().toISOString().split('T')[0]}.json`, 'application/json');
-            showToast('JSONファイルをダウンロードしました');
-        }
-
         function copyToClipboard(text) {
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(text);
-            } else {
-                const textArea = document.createElement('textarea');
-                textArea.value = text;
-                document.body.appendChild(textArea);
-                textArea.select();
-                document.execCommand('copy');
-                document.body.removeChild(textArea);
-            }
+            navigator.clipboard.writeText(text).then(() => {
+                showToast('クリップボードにコピーしました');
+            }).catch(() => {
+                fallbackCopyToClipboard(text);
+            });
+        }
+
+        function fallbackCopyToClipboard(text) {
+            const textArea = document.createElement('textarea');
+            textArea.value = text;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand('copy');
+            document.body.removeChild(textArea);
+            showToast('クリップボードにコピーしました');
         }
 
         function downloadFile(content, filename, contentType) {
@@ -1052,19 +999,347 @@
         }
 
         function showToast(message) {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-
-            toastMessage.textContent = message;
-            toast.classList.remove('hidden');
-
+            elements.toastMessage.textContent = message;
+            elements.toast.classList.remove('hidden');
+            
             setTimeout(() => {
-                toast.classList.add('hidden');
+                elements.toast.classList.add('hidden');
             }, 3000);
         }
 
-        // ショートカット
-        document.addEventListener('keydown', function(e) {
+        function saveToStorage() {
+            // メモリベースなので何もしない（セッション中のみ保持）
+        }
+
+        function loadFromStorage() {
+            // 初期値は空のまま
+        }
+
+        // UI更新関数
+        function updateNoteCount() {
+            elements.noteCount.textContent = notes.length;
+        }
+
+        function updateKeywordsPreview() {
+            const keywords = elements.globalKeywords.value.trim();
+            
+            if (keywords) {
+                const keywordArray = keywords.split(/\s+/);
+                elements.keywordPreview.textContent = `${keywordArray.length}個のキーワード: ${keywordArray.join(' / ')}`;
+            } else {
+                elements.keywordPreview.textContent = '';
+            }
+        }
+
+        function updateKeywordsDisplay() {
+            const keywords = elements.globalKeywords.value.trim();
+            
+            if (keywords) {
+                const keywordArray = keywords.split(/\s+/);
+                const displayKeywords = keywordArray.slice(0, 5);
+                const remaining = keywordArray.length - 5;
+                
+                elements.keywordsList.innerHTML = displayKeywords.map(keyword => 
+                    `<span class="keyword-tag">${keyword}</span>`
+                ).join('') + (remaining > 0 ? `<span style="font-size: 0.75rem; color: #6b7280;">+${remaining}</span>` : '');
+                
+                elements.keywordsDisplay.classList.remove('hidden');
+            } else {
+                elements.keywordsDisplay.classList.add('hidden');
+            }
+        }
+
+        function updateMobileButton() {
+            // モバイルボタンは削除されたので何もしない
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timerSeconds / 60);
+            const seconds = timerSeconds % 60;
+            const display = `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            elements.timerDisplay.textContent = display;
+        }
+
+        function toggleTheme() {
+            isDarkMode = !isDarkMode;
+            document.body.classList.toggle('dark', isDarkMode);
+            elements.themeToggle.innerHTML = isDarkMode ? '<span class="icon-sun"></span>' : '<span class="icon-moon"></span>';
+        }
+
+        // メモ管理関数
+        function showNewNoteForm() {
+            editingIndex = -1;
+            elements.noteForm.classList.remove('hidden');
+            elements.noteForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            clearForm();
+            elements.noteContent.focus();
+        }
+
+        function hideNoteForm() {
+            // メモがない場合はフォームを隠さない
+            if (notes.length === 0) {
+                clearForm();
+                return;
+            }
+            elements.noteForm.classList.add('hidden');
+            clearForm();
+        }
+
+        function clearForm() {
+            elements.notePage.value = '';
+            elements.noteLocation.value = '';
+            elements.noteContent.value = '';
+        }
+
+        function editNote(index) {
+            const note = notes[index];
+            editingIndex = index;
+            elements.notePage.value = note.page || '';
+            elements.noteLocation.value = note.location || '';
+            elements.noteContent.value = note.content || '';
+            elements.noteForm.classList.remove('hidden');
+            elements.noteForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            elements.noteContent.focus();
+        }
+
+        function saveNote() {
+            const content = elements.noteContent.value.trim();
+            if (!content) {
+                showToast('メモ内容を入力してください');
+                return;
+            }
+
+            const note = {
+                id: editingIndex >= 0 ? notes[editingIndex].id : Date.now(),
+                page: elements.notePage.value.trim(),
+                location: elements.noteLocation.value.trim(),
+                content: content,
+                timestamp: editingIndex >= 0 ? notes[editingIndex].timestamp : new Date().toISOString()
+            };
+
+            if (editingIndex >= 0) {
+                notes[editingIndex] = note;
+                showToast('メモを更新しました');
+            } else {
+                notes.push(note);
+                showToast('メモを保存しました');
+            }
+
+            saveToStorage();
+            renderNotes();
+            
+            // メモが1件以上ある場合のみフォームを隠す
+            if (notes.length > 0) {
+                hideNoteForm();
+            }
+        }
+
+        function deleteNote(index) {
+            if (confirm('このメモを削除しますか？')) {
+                notes.splice(index, 1);
+                saveToStorage();
+                renderNotes();
+                showToast('メモを削除しました');
+            }
+        }
+
+        function renderNotes() {
+            updateNoteCount();
+            
+            if (notes.length === 0) {
+                // メモがない場合は新規メモフォームを表示
+                elements.noteForm.classList.remove('hidden');
+                editingIndex = -1;
+                clearForm();
+                elements.notesList.innerHTML = '<div class="empty-state" style="text-align: center; padding: 2rem 1rem; color: #6b7280;"><div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📝</div><p style="font-size: 1.125rem; margin-bottom: 0.5rem;">メモを作成してください</p><p style="font-size: 0.875rem;">上のフォームからメモを入力できます</p></div>';
+                return;
+            }
+
+            // メモがある場合は通常のリスト表示
+            elements.noteForm.classList.add('hidden');
+            
+            const sortedNotes = [...notes].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            
+            elements.notesList.innerHTML = sortedNotes.map((note, originalIndex) => {
+                const index = notes.findIndex(n => n.id === note.id);
+                const date = new Date(note.timestamp);
+                const formattedDate = date.toLocaleDateString('ja-JP', {
+                    month: 'short',
+                    day: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                return `
+                    <div class="note-card animate-slide-up">
+                        <div class="note-header">
+                            <div class="note-meta">
+                                <div class="note-meta-row">
+                                    ${note.page ? `<div class="note-meta-item">📄 p.${note.page}</div>` : ''}
+                                    ${note.location ? `<div class="note-meta-item">📍 ${note.location}</div>` : ''}
+                                    <div class="note-meta-item">🕒 ${formattedDate}</div>
+                                </div>
+                            </div>
+                            <div class="note-actions">
+                                <button class="action-btn" onclick="editNote(${index})" title="編集">
+                                    <span class="icon-edit"></span>
+                                </button>
+                                <button class="action-btn delete" onclick="deleteNote(${index})" title="削除">
+                                    <span class="icon-delete"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="note-content">
+                            ${renderMarkdown(note.content)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // エクスポート機能
+        function exportToMarkdown() {
+            const title = elements.bookTitle.value || 'メモ';
+            const url = elements.bookUrl.value.trim();
+            const keywords = elements.globalKeywords.value.trim();
+            
+            let markdown = `# ${title}\n\n`;
+            
+            if (url) {
+                markdown += `**URL:** ${url}\n\n`;
+            }
+            
+            if (keywords) {
+                markdown += `**キーワード:** ${keywords}\n\n`;
+            }
+            
+            markdown += `**作成日:** ${new Date().toLocaleDateString('ja-JP')}\n`;
+            markdown += `**メモ数:** ${notes.length}件\n\n`;
+            markdown += '---\n\n';
+            
+            const sortedNotes = [...notes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
+            
+            sortedNotes.forEach((note, index) => {
+                markdown += `## メモ ${index + 1}\n\n`;
+                
+                if (note.page || note.location) {
+                    markdown += '**参照:**\n';
+                    if (note.page) markdown += `- ページ: ${note.page}\n`;
+                    if (note.location) markdown += `- Kindle位置: ${note.location}\n`;
+                    markdown += '\n';
+                }
+                
+                markdown += `**作成日時:** ${new Date(note.timestamp).toLocaleString('ja-JP')}\n\n`;
+                markdown += `${note.content}\n\n`;
+                markdown += '---\n\n';
+            });
+            
+            copyToClipboard(markdown);
+        }
+
+        function exportToJson() {
+            const exportData = {
+                title: elements.bookTitle.value || 'メモ',
+                url: elements.bookUrl.value.trim(),
+                keywords: elements.globalKeywords.value.trim(),
+                exportDate: new Date().toISOString(),
+                noteCount: notes.length,
+                notes: notes
+            };
+            
+            copyToClipboard(JSON.stringify(exportData, null, 2));
+            showToast('JSONをクリップボードにコピーしました');
+        }
+
+        // タイマー機能
+        function toggleTimer() {
+            if (isTimerActive) {
+                clearInterval(timerInterval);
+                elements.timerBtn.textContent = '開始';
+                elements.timerBtn.classList.remove('active');
+                isTimerActive = false;
+            } else {
+                timerInterval = setInterval(() => {
+                    timerSeconds--;
+                    updateTimerDisplay();
+                    
+                    if (timerSeconds <= 0) {
+                        clearInterval(timerInterval);
+                        elements.timerBtn.textContent = '開始';
+                        elements.timerBtn.classList.remove('active');
+                        isTimerActive = false;
+                        showToast('タイマーが終了しました！');
+                        timerSeconds = 25 * 60;
+                        updateTimerDisplay();
+                    }
+                }, 1000);
+                
+                elements.timerBtn.textContent = '停止';
+                elements.timerBtn.classList.add('active');
+                isTimerActive = true;
+            }
+        }
+
+        function resetTimer() {
+            clearInterval(timerInterval);
+            timerSeconds = 25 * 60;
+            updateTimerDisplay();
+            elements.timerBtn.textContent = '開始';
+            elements.timerBtn.classList.remove('active');
+            isTimerActive = false;
+        }
+
+        function addThoughts() {
+            const currentContent = elements.noteContent.value;
+            const thoughtsText = '\n\n## 💭 自分の考え\n\n';
+            
+            if (currentContent && !currentContent.includes('💭 自分の考え')) {
+                elements.noteContent.value = currentContent + thoughtsText;
+            } else if (!currentContent) {
+                elements.noteContent.value = thoughtsText.trim();
+            }
+            
+            elements.noteContent.focus();
+            const textArea = elements.noteContent;
+            textArea.setSelectionRange(textArea.value.length, textArea.value.length);
+        }
+
+        // イベントリスナー
+        document.addEventListener('DOMContentLoaded', () => {
+            renderNotes();
+            updateTimerDisplay();
+            updateMobileButton();
+            
+            // ダークモードをデフォルトに
+            document.body.classList.add('dark');
+            elements.themeToggle.innerHTML = '<span class="icon-sun"></span>';
+        });
+
+        window.addEventListener('resize', updateMobileButton);
+
+        // ボタンイベント
+        elements.newNoteBtn.addEventListener('click', showNewNoteForm);
+        elements.cancelBtn.addEventListener('click', hideNoteForm);
+        elements.saveBtn.addEventListener('click', saveNote);
+        elements.thoughtsBtn.addEventListener('click', addThoughts);
+        elements.exportMd.addEventListener('click', exportToMarkdown);
+        elements.exportJson.addEventListener('click', exportToJson);
+        elements.themeToggle.addEventListener('click', toggleTheme);
+        elements.timerBtn.addEventListener('click', toggleTimer);
+        elements.resetBtn.addEventListener('click', resetTimer);
+
+        // 入力イベント
+        elements.globalKeywords.addEventListener('input', () => {
+            updateKeywordsPreview();
+            updateKeywordsDisplay();
+        });
+
+        elements.bookTitle.addEventListener('input', () => {
+            // 何もしない（メモリベース）
+        });
+
+        // キーボードショートカット
+        document.addEventListener('keydown', (e) => {
             if (e.ctrlKey || e.metaKey) {
                 switch (e.key) {
                     case 'n':
@@ -1073,14 +1348,12 @@
                         break;
                     case 's':
                         e.preventDefault();
-                        if (!document.getElementById('noteForm').classList.contains('hidden')) {
-                            saveNote();
-                        }
+                        saveNote();
+                        break;
+                    case 'Escape':
+                        hideNoteForm();
                         break;
                 }
-            }
-            if (e.key === 'Escape') {
-                hideNoteForm();
             }
         });
     </script>
