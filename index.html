@@ -707,14 +707,8 @@
         .icon-check::before { content: "✓"; }
         .icon-reset::before { content: "🔄"; }
 
-        .hidden-mobile {
+        .btn-text {
             display: inline;
-        }
-
-        @media (max-width: 480px) {
-            .hidden-mobile {
-                display: none;
-            }
         }
     </style>
 </head>
@@ -729,11 +723,11 @@
                 <div class="export-group">
                     <button class="btn btn-primary" id="exportMd">
                         <span class="icon-copy"></span>
-                        <span class="hidden-mobile">MD</span>
+                        <span class="btn-text">MD</span>
                     </button>
                     <button class="btn btn-secondary" id="exportJson">
                         <span class="icon-download"></span>
-                        <span class="hidden-mobile">JSON</span>
+                        <span class="btn-text">JSON</span>
                     </button>
                 </div>
                 <div class="timer-group">
@@ -816,13 +810,10 @@
         </div>
 
         <!-- URL入力セクション -->
-        <div class="url-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #e5e7eb;">
+        <div class="url-section" style="margin-top: 2rem; padding-top: 2rem; border-top: 1px solid #4b5563;">
             <div class="form-section">
-                <label for="bookUrl">参考URL（任意）</label>
+                <label for="bookUrl">参考URL</label>
                 <input type="url" id="bookUrl" class="input" placeholder="https://example.com">
-                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
-                    エクスポート時にこのURLが含まれます
-                </div>
             </div>
         </div>
     </div>
@@ -1056,7 +1047,7 @@
                 elements.noteForm.classList.remove('hidden');
                 editingIndex = -1;
                 clearForm();
-                elements.notesList.innerHTML = '<div class="empty-state" style="text-align: center; padding: 2rem 1rem; color: #6b7280;"><div style="font-size: 3rem; margin-bottom: 1rem; opacity: 0.5;">📝</div><p style="font-size: 1.125rem; margin-bottom: 0.5rem;">メモを作成してください</p><p style="font-size: 0.875rem;">上のフォームからメモを入力できます</p></div>';
+                elements.notesList.innerHTML = '';
                 return;
             }
 
