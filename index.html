@@ -2,8 +2,10 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>メモ補助ツール</title>
+    <link rel="apple-touch-icon" href="apple-touch-icon.png">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <style>
         /* リセット */
         * {
@@ -12,17 +14,12 @@
             box-sizing: border-box;
         }
 
-        /* ベーススタイル */
+        /* ベーススタイル - 常にダークモード */
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f9fafb;
-            color: #1f2937;
-            transition: background 0.3s ease, color 0.3s ease;
-        }
-
-        body.dark {
             background: #111827;
             color: #ffffff;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
         .container {
@@ -33,19 +30,11 @@
 
         /* ヘッダー */
         .header {
-            position: sticky;
-            top: 0;
-            z-index: 50;
-            background: rgba(255, 255, 255, 0.95);
-            border-bottom: 1px solid #e5e7eb;
+            background: rgba(17, 24, 39, 0.95);
+            border-bottom: 1px solid #374151;
             backdrop-filter: blur(10px);
             padding: 0.5rem;
             margin-bottom: 1rem;
-        }
-
-        body.dark .header {
-            background: rgba(17, 24, 39, 0.95);
-            border-bottom-color: #374151;
         }
 
         .header-content {
@@ -79,18 +68,14 @@
         }
 
         .note-count {
-            background: #f3f4f6;
-            color: #6b7280;
+            background: #374151;
+            color: #9ca3af;
             padding: 0.375rem 0.75rem;
             border-radius: 0.375rem;
             font-size: 0.75rem;
             font-weight: 500;
             white-space: nowrap;
-        }
-
-        body.dark .note-count {
-            background: #374151;
-            color: #9ca3af;
+            display: none;
         }
 
         /* ボタン */
@@ -106,8 +91,8 @@
             cursor: pointer;
             transition: transform 0.2s ease;
             text-decoration: none;
-            background: white;
-            color: #1f2937;
+            background: #374151;
+            color: #d1d5db;
         }
 
         .btn:hover {
@@ -138,30 +123,15 @@
 
         .btn-icon {
             padding: 0.5rem;
-            background: #f3f4f6;
-            color: #6b7280;
+            background: #374151;
+            color: #9ca3af;
             border-radius: 0.375rem;
             border: none;
             cursor: pointer;
             transition: background 0.2s ease, color 0.2s ease;
         }
 
-        body.dark .btn {
-            background: #374151;
-            color: #d1d5db;
-        }
-
-        body.dark .btn-icon {
-            background: #374151;
-            color: #9ca3af;
-        }
-
         .btn-icon:hover {
-            background: #e5e7eb;
-            color: #374151;
-        }
-
-        body.dark .btn-icon:hover {
             background: #4b5563;
             color: #f9fafb;
         }
@@ -187,9 +157,9 @@
 
         .timer-btn,
         .reset-btn {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.75rem;
-            border-radius: 0.25rem;
+            padding: 0.5rem;
+            font-size: 1rem;
+            border-radius: 0.375rem;
             border: none;
             background: #3b82f6;
             color: white;
@@ -199,6 +169,10 @@
 
         .timer-btn.active {
             background: #ef4444;
+        }
+
+        .timer-btn.active .icon-clock::before {
+            content: "⏸️";
         }
 
         .timer-btn:hover,
@@ -216,10 +190,7 @@
         }
 
         .sticky-keywords {
-            position: sticky;
-            top: 3.5rem;
             background: inherit;
-            z-index: 40;
             padding-bottom: 0.5rem;
         }
 
@@ -230,7 +201,7 @@
             margin-bottom: 0.5rem;
         }
 
-        /* iPhone SE対応 - 375px以下で全て1列表示 */
+        /* iPhone SE対応 - 375px以下 */
         @media (max-width: 375px) {
             .header-content {
                 flex-direction: column;
@@ -243,20 +214,8 @@
             }
 
             .header-controls {
-                flex-direction: column;
-                gap: 0.5rem;
-            }
-
-            .export-controls {
                 justify-content: center;
-            }
-
-            .timer {
-                justify-content: center;
-            }
-
-            .note-count {
-                text-align: center;
+                gap: 0.25rem;
             }
 
             /* フォーム要素を横並びに */
@@ -331,18 +290,11 @@
         .textarea {
             width: 100%;
             padding: 0.75rem;
-            border: 1px solid #d1d5db;
+            border: 1px solid #4b5563;
             border-radius: 0.5rem;
             font-size: 1rem;
             transition: border-color 0.2s ease, box-shadow 0.2s ease;
-            background: white;
-            color: inherit;
-        }
-
-        body.dark .input,
-        body.dark .textarea {
             background: #374151;
-            border-color: #4b5563;
             color: white;
         }
 
@@ -379,18 +331,13 @@
 
         /* メモフォーム */
         .note-form {
-            background: white;
-            border: 1px solid #e5e7eb;
+            background: #374151;
+            border: 1px solid #4b5563;
             border-radius: 0.75rem;
             padding: 1rem;
             margin-bottom: 1rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s ease;
-        }
-
-        body.dark .note-form {
-            background: #374151;
-            border-color: #4b5563;
         }
 
         .note-form.hidden {
@@ -421,11 +368,6 @@
         }
 
         .close-btn:hover {
-            background: #f3f4f6;
-            color: #374151;
-        }
-
-        body.dark .close-btn:hover {
             background: #4b5563;
             color: #f9fafb;
         }
@@ -484,8 +426,8 @@
         }
 
         .note-card {
-            background: white;
-            border: 1px solid #e5e7eb;
+            background: #374151;
+            border: 1px solid #4b5563;
             border-radius: 0.75rem;
             padding: 1rem;
             transition: all 0.3s ease;
@@ -493,19 +435,10 @@
             overflow: hidden;
         }
 
-        body.dark .note-card {
-            background: #374151;
-            border-color: #4b5563;
-        }
-
         .note-card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 8px 12px rgba(0, 0, 0, 0.1);
-            border-color: #3b82f6;
-        }
-
-        body.dark .note-card:hover {
             box-shadow: 0 8px 12px rgba(0, 0, 0, 0.3);
+            border-color: #3b82f6;
         }
 
         .note-header {
@@ -572,12 +505,8 @@
         .note-content {
             font-size: 0.875rem;
             line-height: 1.5;
-            color: #374151;
-            margin-bottom: 0.75rem;
-        }
-
-        body.dark .note-content {
             color: #d1d5db;
+            margin-bottom: 0.75rem;
         }
 
         /* キーワード表示 */
@@ -586,17 +515,12 @@
             bottom: 1rem;
             left: 1rem;
             max-width: calc(100vw - 2rem);
-            background: white;
-            border: 1px solid #e5e7eb;
+            background: #374151;
+            border: 1px solid #4b5563;
             border-radius: 0.5rem;
             padding: 0.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             z-index: 40;
-        }
-
-        body.dark .keywords-display {
-            background: #374151;
-            border-color: #4b5563;
         }
 
         .keywords-display.hidden {
@@ -616,20 +540,15 @@
         }
 
         .keyword-tag {
-            background: rgba(59, 130, 246, 0.1);
-            color: #3b82f6;
+            background: rgba(59, 130, 246, 0.2);
+            color: #60a5fa;
             padding: 0.25rem 0.5rem;
             border-radius: 9999px;
             font-size: 0.75rem;
             white-space: nowrap;
         }
 
-        body.dark .keyword-tag {
-            background: rgba(59, 130, 246, 0.2);
-            color: #60a5fa;
-        }
-
-        body.dark .url-section {
+        .url-section {
             border-top-color: #4b5563;
         }
 
@@ -784,8 +703,6 @@
         .icon-copy::before { content: "📋"; }
         .icon-download::before { content: "⬇️"; }
         .icon-clock::before { content: "⏰"; }
-        .icon-sun::before { content: "☀️"; }
-        .icon-moon::before { content: "🌙"; }
         .icon-plus::before { content: "+"; }
         .icon-check::before { content: "✓"; }
         .icon-reset::before { content: "🔄"; }
@@ -809,7 +726,7 @@
                 <h1>メモ補助ツール</h1>
             </div>
             <div class="header-controls">
-                <div class="export-controls">
+                <div class="export-group">
                     <button class="btn btn-primary" id="exportMd">
                         <span class="icon-copy"></span>
                         <span class="hidden-mobile">MD</span>
@@ -819,20 +736,15 @@
                         <span class="hidden-mobile">JSON</span>
                     </button>
                 </div>
-                <div class="note-count">
-                    <span id="noteCount">0</span>件
-                </div>
-                <div class="timer">
-                    <span class="icon-clock"></span>
+                <div class="timer-group">
                     <span class="timer-display" id="timerDisplay">25:00</span>
-                    <button class="timer-btn" id="timerBtn">開始</button>
+                    <button class="timer-btn" id="timerBtn">
+                        <span class="icon-clock"></span>
+                    </button>
                     <button class="reset-btn" id="resetBtn">
                         <span class="icon-reset"></span>
                     </button>
                 </div>
-                <button class="btn-icon" id="themeToggle">
-                    <span class="icon-moon"></span>
-                </button>
             </div>
         </div>
     </header>
@@ -908,6 +820,9 @@
             <div class="form-section">
                 <label for="bookUrl">参考URL（任意）</label>
                 <input type="url" id="bookUrl" class="input" placeholder="https://example.com">
+                <div style="margin-top: 0.5rem; font-size: 0.875rem; color: #6b7280;">
+                    エクスポート時にこのURLが含まれます
+                </div>
             </div>
         </div>
     </div>
@@ -937,7 +852,6 @@
         const elements = {
             exportMd: document.getElementById('exportMd'),
             exportJson: document.getElementById('exportJson'),
-            themeToggle: document.getElementById('themeToggle'),
             timerBtn: document.getElementById('timerBtn'),
             resetBtn: document.getElementById('resetBtn'),
             newNoteBtn: document.getElementById('newNoteBtn'),
@@ -952,7 +866,6 @@
             keywordsList: document.getElementById('keywordsList'),
             toast: document.getElementById('toast'),
             toastMessage: document.getElementById('toastMessage'),
-            noteCount: document.getElementById('noteCount'),
             timerDisplay: document.getElementById('timerDisplay'),
             bookTitle: document.getElementById('bookTitle'),
             bookUrl: document.getElementById('bookUrl'),
@@ -1016,10 +929,6 @@
         }
 
         // UI更新関数
-        function updateNoteCount() {
-            elements.noteCount.textContent = notes.length;
-        }
-
         function updateKeywordsPreview() {
             const keywords = elements.globalKeywords.value.trim();
             
@@ -1061,9 +970,7 @@
         }
 
         function toggleTheme() {
-            isDarkMode = !isDarkMode;
-            document.body.classList.toggle('dark', isDarkMode);
-            elements.themeToggle.innerHTML = isDarkMode ? '<span class="icon-sun"></span>' : '<span class="icon-moon"></span>';
+            // 削除済み - 常にダークモード
         }
 
         // メモ管理関数
@@ -1144,8 +1051,6 @@
         }
 
         function renderNotes() {
-            updateNoteCount();
-            
             if (notes.length === 0) {
                 // メモがない場合は新規メモフォームを表示
                 elements.noteForm.classList.remove('hidden');
@@ -1255,7 +1160,6 @@
         function toggleTimer() {
             if (isTimerActive) {
                 clearInterval(timerInterval);
-                elements.timerBtn.textContent = '開始';
                 elements.timerBtn.classList.remove('active');
                 isTimerActive = false;
             } else {
@@ -1265,7 +1169,6 @@
                     
                     if (timerSeconds <= 0) {
                         clearInterval(timerInterval);
-                        elements.timerBtn.textContent = '開始';
                         elements.timerBtn.classList.remove('active');
                         isTimerActive = false;
                         showToast('タイマーが終了しました！');
@@ -1274,7 +1177,6 @@
                     }
                 }, 1000);
                 
-                elements.timerBtn.textContent = '停止';
                 elements.timerBtn.classList.add('active');
                 isTimerActive = true;
             }
@@ -1284,7 +1186,6 @@
             clearInterval(timerInterval);
             timerSeconds = 25 * 60;
             updateTimerDisplay();
-            elements.timerBtn.textContent = '開始';
             elements.timerBtn.classList.remove('active');
             isTimerActive = false;
         }
@@ -1309,10 +1210,6 @@
             renderNotes();
             updateTimerDisplay();
             updateMobileButton();
-            
-            // ダークモードをデフォルトに
-            document.body.classList.add('dark');
-            elements.themeToggle.innerHTML = '<span class="icon-sun"></span>';
         });
 
         window.addEventListener('resize', updateMobileButton);
@@ -1324,7 +1221,6 @@
         elements.thoughtsBtn.addEventListener('click', addThoughts);
         elements.exportMd.addEventListener('click', exportToMarkdown);
         elements.exportJson.addEventListener('click', exportToJson);
-        elements.themeToggle.addEventListener('click', toggleTheme);
         elements.timerBtn.addEventListener('click', toggleTimer);
         elements.resetBtn.addEventListener('click', resetTimer);
 
