@@ -1203,6 +1203,16 @@
             updateMobileButton();
         });
 
+        // ページを閉じる前の警告
+        window.addEventListener('beforeunload', (e) => {
+            if (notes.length > 0) {
+                const message = '内容は保存されません。エクスポートは完了しましたか？';
+                e.preventDefault();
+                e.returnValue = message;
+                return message;
+            }
+        });
+
         window.addEventListener('resize', updateMobileButton);
 
         // ボタンイベント
