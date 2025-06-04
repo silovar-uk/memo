@@ -1131,6 +1131,7 @@
             });
             
             copyToClipboard(markdown);
+            temporaryDisableWarning();
         }
 
         function exportToJson() {
@@ -1145,6 +1146,7 @@
             
             copyToClipboard(JSON.stringify(exportData, null, 2));
             showToast('JSONをクリップボードにコピーしました');
+            temporaryDisableWarning();
         }
 
         // タイマー機能
@@ -1205,13 +1207,32 @@
 
         // ページを閉じる前の警告
         window.addEventListener('beforeunload', (e) => {
-            if (notes.length > 0) {
-                const message = '内容は保存されません。エクスポートは完了しましたか？';
+            // メモまたはフォーム入力がある場合に警告
+            const hasNotes = notes.length > 0;
+            const hasFormInput = elements.bookTitle?.value?.trim() || 
+                                elements.globalKeywords?.value?.trim() || 
+                                elements.notePage?.value?.trim() || 
+                                elements.noteLocation?.value?.trim() || 
+                                elements.noteContent?.value?.trim() || 
+                                elements.bookUrl?.value?.trim();
+            
+            if (hasNotes || hasFormInput) {
+                const message = '内容は保存されません。ページを離れるとすべてのデータが失われます。エクスポートは完了しましたか？';
                 e.preventDefault();
                 e.returnValue = message;
                 return message;
             }
         });
+
+        // エクスポート時に警告を一時的に無効化する機能
+        let exportInProgress = false;
+        
+        function temporaryDisableWarning() {
+            exportInProgress = true;
+            setTimeout(() => {
+                exportInProgress = false;
+            }, 1000);
+        }
 
         window.addEventListener('resize', updateMobileButton);
 
