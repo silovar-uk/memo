@@ -80,17 +80,6 @@
             gap: 0.25rem;
         }
 
-        .note-count {
-            background: #374151;
-            color: #9ca3af;
-            padding: 0.375rem 0.75rem;
-            border-radius: 0.375rem;
-            font-size: 0.75rem;
-            font-weight: 500;
-            white-space: nowrap;
-            display: none;
-        }
-
         /* ボタン */
         .btn {
             display: inline-flex;
@@ -132,21 +121,6 @@
         .btn-secondary:hover {
             background: #059669;
             box-shadow: 0 4px 8px rgba(16, 185, 129, 0.4);
-        }
-
-        .btn-icon {
-            padding: 0.5rem;
-            background: #374151;
-            color: #9ca3af;
-            border-radius: 0.375rem;
-            border: none;
-            cursor: pointer;
-            transition: background 0.2s ease, color 0.2s ease;
-        }
-
-        .btn-icon:hover {
-            background: #4b5563;
-            color: #f9fafb;
         }
 
         /* タイマー */
@@ -289,34 +263,6 @@
 
         .note-form.hidden {
             display: none;
-        }
-
-        .form-header {
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            margin-bottom: 1rem;
-        }
-
-        .form-header h3 {
-            font-size: 1rem;
-            font-weight: 600;
-        }
-
-        .close-btn {
-            background: none;
-            border: none;
-            color: #6b7280;
-            cursor: pointer;
-            font-size: 1.25rem;
-            transition: background 0.2s ease, color 0.2s ease;
-            padding: 0.25rem;
-            border-radius: 0.25rem;
-        }
-
-        .close-btn:hover {
-            background: #4b5563;
-            color: #f9fafb;
         }
 
         .content-section {
@@ -731,6 +677,12 @@
 
         <!-- メモフォーム -->
         <div class="note-form" id="noteForm">
+            <!-- メモタイトル -->
+            <div class="form-section">
+                <label for="noteTitle">メモタイトル（任意）</label>
+                <input type="text" id="noteTitle" class="input" placeholder="メモのタイトルを入力してください">
+            </div>
+
             <!-- ページ番号とKindle位置を横並びに -->
             <div class="page-location-row">
                 <div>
@@ -765,7 +717,7 @@
         </div>
 
         <!-- 新規メモボタン -->
-        <div style="text-align: right; margin-bottom: 1rem;">
+        <div style="text-align: right; margin-bottom: 1rem;" id="newNoteBtnContainer">
             <button class="btn btn-primary" id="newNoteBtn">
                 <span class="icon-plus"></span>
                 新規メモ
@@ -777,7 +729,7 @@
             <div class="empty-state" id="emptyState">
                 <div class="empty-icon">📝</div>
                 <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">まだメモがありません</p>
-                <p style="font-size: 0.875rem;">新規メモボタンで最初のメモを作成しましょう</p>
+                <p style="font-size: 0.875rem;">最初のメモを作成しましょう</p>
             </div>
         </div>
 
@@ -817,6 +769,7 @@
             timerBtn: document.getElementById('timerBtn'),
             resetBtn: document.getElementById('resetBtn'),
             newNoteBtn: document.getElementById('newNoteBtn'),
+            newNoteBtnContainer: document.getElementById('newNoteBtnContainer'),
             thoughtsBtn: document.getElementById('thoughtsBtn'),
             saveBtn: document.getElementById('saveBtn'),
             cancelBtn: document.getElementById('cancelBtn'),
@@ -832,6 +785,7 @@
             timerDisplay: document.getElementById('timerDisplay'),
             bookTitle: document.getElementById('bookTitle'),
             bookUrl: document.getElementById('bookUrl'),
+            noteTitle: document.getElementById('noteTitle'),
             notePage: document.getElementById('notePage'),
             noteLocation: document.getElementById('noteLocation'),
             noteContent: document.getElementById('noteContent')
@@ -914,6 +868,7 @@
         function showNewNoteForm() {
             editingIndex = -1;
             elements.noteForm.classList.remove('hidden');
+            elements.newNoteBtnContainer.style.display = 'none'; // 新規メモボタンを隠す
             elements.noteForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
             clearForm();
             elements.noteContent.focus();
@@ -925,10 +880,12 @@
                 return;
             }
             elements.noteForm.classList.add('hidden');
+            elements.newNoteBtnContainer.style.display = 'block'; // 新規メモボタンを表示
             clearForm();
         }
 
         function clearForm() {
+            elements.noteTitle.value = '';
             elements.notePage.value = '';
             elements.noteLocation.value = '';
             elements.noteContent.value = '';
@@ -937,10 +894,12 @@
         function editNote(index) {
             const note = notes[index];
             editingIndex = index;
+            elements.noteTitle.value = note.title || '';
             elements.notePage.value = note.page || '';
             elements.noteLocation.value = note.location || '';
             elements.noteContent.value = note.content || '';
             elements.noteForm.classList.remove('hidden');
+            elements.newNoteBtnContainer.style.display = 'none'; // 新規メモボタンを隠す
             elements.noteForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
             elements.noteContent.focus();
         }
@@ -954,6 +913,7 @@
 
             const note = {
                 id: editingIndex >= 0 ? notes[editingIndex].id : Date.now(),
+                title: elements.noteTitle.value.trim(),
                 page: elements.notePage.value.trim(),
                 location: elements.noteLocation.value.trim(),
                 content: content,
@@ -986,19 +946,21 @@
         function renderNotes() {
             if (notes.length === 0) {
                 elements.noteForm.classList.remove('hidden');
+                elements.newNoteBtnContainer.style.display = 'none'; // 新規メモボタンを隠す
                 editingIndex = -1;
                 clearForm();
                 elements.notesList.innerHTML = `
                     <div class="empty-state">
                         <div class="empty-icon">📝</div>
                         <p style="font-size: 1.125rem; margin-bottom: 0.5rem;">まだメモがありません</p>
-                        <p style="font-size: 0.875rem;">新規メモボタンで最初のメモを作成しましょう</p>
+                        <p style="font-size: 0.875rem;">最初のメモを作成しましょう</p>
                     </div>
                 `;
                 return;
             }
 
             elements.noteForm.classList.add('hidden');
+            elements.newNoteBtnContainer.style.display = 'block'; // 新規メモボタンを表示
             
             const sortedNotes = [...notes].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
             
@@ -1016,6 +978,7 @@
                     <div class="note-card animate-slide-up">
                         <div class="note-header">
                             <div class="note-meta">
+                                ${note.title ? `<div style="font-size: 1rem; font-weight: 600; color: #f3f4f6; margin-bottom: 0.5rem;">${note.title}</div>` : ''}
                                 <div class="note-meta-row">
                                     ${note.page ? `<div class="note-meta-item">📄 p.${note.page}</div>` : ''}
                                     ${note.location ? `<div class="note-meta-item">📍 ${note.location}</div>` : ''}
@@ -1062,7 +1025,7 @@
             const sortedNotes = [...notes].sort((a, b) => new Date(a.timestamp) - new Date(b.timestamp));
             
             sortedNotes.forEach((note, index) => {
-                markdown += `## メモ ${index + 1}\n\n`;
+                markdown += `## メモ ${index + 1}${note.title ? `: ${note.title}` : ''}\n\n`;
                 
                 if (note.page || note.location) {
                     markdown += '**参照:**\n';
@@ -1202,6 +1165,7 @@
             const hasNotes = notes.length > 0;
             const hasFormInput = (elements.bookTitle && elements.bookTitle.value && elements.bookTitle.value.trim()) || 
                                 (elements.globalKeywords && elements.globalKeywords.value && elements.globalKeywords.value.trim()) || 
+                                (elements.noteTitle && elements.noteTitle.value && elements.noteTitle.value.trim()) ||
                                 (elements.notePage && elements.notePage.value && elements.notePage.value.trim()) || 
                                 (elements.noteLocation && elements.noteLocation.value && elements.noteLocation.value.trim()) || 
                                 (elements.noteContent && elements.noteContent.value && elements.noteContent.value.trim()) || 
